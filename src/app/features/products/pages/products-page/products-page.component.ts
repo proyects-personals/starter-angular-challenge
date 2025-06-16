@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -8,15 +8,22 @@ import { ProductListComponent } from '../../components/product-list/product-list
 import { ProductFormComponent } from '../../components/product-form/product-form.component';
 import { ProductDeleteComponent } from '../../components/product-delete/product-delete/product-delete.component';
 
-
 @Component({
   selector: 'app-products-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductListComponent, ProductFormComponent, ProductDeleteComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ProductListComponent,
+    ProductFormComponent,
+    ProductDeleteComponent,
+  ],
   templateUrl: './products-page.component.html',
   styleUrls: ['./products-page.component.css'],
 })
-export class ProductsPageComponent {
+export class ProductsPageComponent implements OnInit {
+  private productService = inject(ProductService);
+
   products: Product[] = [];
   filteredProducts: Product[] = [];
   loading = false;
@@ -31,8 +38,6 @@ export class ProductsPageComponent {
 
   showDeleteConfirmation = false;
   productToDelete: Product | null = null;
-
-  constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
     this.loadProducts();
@@ -56,15 +61,13 @@ export class ProductsPageComponent {
 
   applyFilters() {
     const term = this.searchTerm.trim().toLowerCase();
-    if (term) {
-      this.filteredProducts = this.products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(term) ||
-          product.description.toLowerCase().includes(term)
-      );
-    } else {
-      this.filteredProducts = [...this.products];
-    }
+    this.filteredProducts = term
+      ? this.products.filter(
+          (product) =>
+            product.name.toLowerCase().includes(term) ||
+            product.description.toLowerCase().includes(term)
+        )
+      : [...this.products];
   }
 
   onSearchChange() {
@@ -90,7 +93,7 @@ export class ProductsPageComponent {
     this.editingProduct = null;
   }
 
-  onProductSaved(savedProduct: Product) {
+  onProductSaved() {
     this.loadProducts();
     this.showModal = false;
     this.editingProduct = null;

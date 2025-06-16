@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -10,10 +10,9 @@ import { API_BASE_URL } from '../tokens/api-url.token';
   providedIn: 'root',
 })
 export class ProductService {
-  constructor(
-    private http: HttpClient,
-    @Inject(API_BASE_URL) private baseUrl: string
-  ) {}
+  // En vez de constructor, usamos inject()
+  private http = inject(HttpClient);
+  private baseUrl = inject(API_BASE_URL);
 
   getProducts(): Observable<Product[]> {
     return this.http.get<{ data: Product[] }>(this.baseUrl).pipe(

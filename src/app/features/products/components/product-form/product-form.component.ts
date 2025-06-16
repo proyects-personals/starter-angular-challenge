@@ -6,6 +6,7 @@ import {
   Output,
   OnChanges,
   SimpleChanges,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -24,6 +25,7 @@ import { validateId, validateName, validateDescription, validateLogo, validateDa
 export class ProductFormComponent implements OnInit, OnChanges {
   @Input() isVisible = false;
   @Input() productToEdit?: Product | null;
+  // eslint-disable-next-line @angular-eslint/no-output-native
   @Output() close = new EventEmitter<void>();
   @Output() productSaved = new EventEmitter<Product>();
 
@@ -58,7 +60,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
 
   private idInput$ = new Subject<string>();
 
-  constructor(private productService: ProductService) {}
+  private productService = inject(ProductService);
 
   ngOnInit(): void {
     this.idInput$

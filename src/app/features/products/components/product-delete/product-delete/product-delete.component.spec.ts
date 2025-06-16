@@ -20,15 +20,15 @@ describe('ProductDeleteComponent', () => {
   });
 
   it('debería emitir confirm al llamar onConfirm', () => {
-    jest.spyOn(component.confirm, 'emit');
+    jest.spyOn(component.confirmDelete, 'emit');
     component.onConfirm();
-    expect(component.confirm.emit).toHaveBeenCalled();
+    expect(component.confirmDelete.emit).toHaveBeenCalled();
   });
 
   it('debería emitir cancel al llamar onCancel', () => {
-    jest.spyOn(component.cancel, 'emit');
+    jest.spyOn(component.cancelDelete, 'emit');
     component.onCancel();
-    expect(component.cancel.emit).toHaveBeenCalled();
+    expect(component.cancelDelete.emit).toHaveBeenCalled();
   });
 
   it('debería aceptar un mensaje personalizado', () => {
