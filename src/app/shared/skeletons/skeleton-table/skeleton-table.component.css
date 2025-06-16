@@ -1,0 +1,41 @@
+.skeleton-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+.skeleton-line {
+  height: 16px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+.skeleton-line.short {
+  width: 60px;
+}
+.skeleton-line.icon-placeholder {
+  width: 20px;
+  height: 20px;
+  margin: auto;
+  border-radius: 4px;
+}
+.skeleton-circle {
+  width: 40px;
+  height: 40px;
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
