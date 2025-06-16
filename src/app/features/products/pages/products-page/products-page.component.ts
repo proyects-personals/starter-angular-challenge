@@ -22,16 +22,20 @@ import { ProductDeleteComponent } from '../../components/product-delete/product-
   styleUrls: ['./products-page.component.css'],
 })
 export class ProductsPageComponent implements OnInit {
-  private productService = inject(ProductService);
+  private readonly DEFAULT_ITEMS_PER_PAGE = 5;
+  private readonly ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50];
+
+  private readonly productService = inject(ProductService);
 
   products: Product[] = [];
   filteredProducts: Product[] = [];
+
   loading = false;
   errorMessage: string | null = null;
 
   searchTerm = '';
-  itemsPerPage = 5;
-  itemsPerPageOptions = [5, 10, 20, 50];
+  itemsPerPage = this.DEFAULT_ITEMS_PER_PAGE;
+  itemsPerPageOptions = this.ITEMS_PER_PAGE_OPTIONS;
 
   showModal = false;
   editingProduct: Product | null = null;
@@ -43,87 +47,101 @@ export class ProductsPageComponent implements OnInit {
     this.loadProducts();
   }
 
-  loadProducts() {
-    this.loading = true;
+  loadProducts(): void {
+    this.setLoading(true);
     this.errorMessage = null;
+
     this.productService.getProducts().subscribe({
       next: (data) => {
         this.products = data;
         this.applyFilters();
-        this.loading = false;
+        this.setLoading(false);
       },
       error: () => {
-        this.errorMessage = 'Error cargando productos';
-        this.loading = false;
+        this.setError('Error cargando productos');
+        this.setLoading(false);
       },
     });
   }
 
-  applyFilters() {
+  applyFilters(): void {
     const term = this.searchTerm.trim().toLowerCase();
     this.filteredProducts = term
       ? this.products.filter(
-          (product) =>
-            product.name.toLowerCase().includes(term) ||
-            product.description.toLowerCase().includes(term)
-        )
+        (product) =>
+          product.name.toLowerCase().includes(term) ||
+          product.description.toLowerCase().includes(term)
+      )
       : [...this.products];
   }
 
-  onSearchChange() {
+  onSearchChange(): void {
     this.applyFilters();
   }
 
-  onItemsPerPageChange(newItemsPerPage?: number) {
-    if (newItemsPerPage) this.itemsPerPage = newItemsPerPage;
+  onItemsPerPageChange(newItemsPerPage?: number): void {
+    if (newItemsPerPage && this.itemsPerPageOptions.includes(newItemsPerPage)) {
+      this.itemsPerPage = newItemsPerPage;
+    }
   }
 
-  openAddProductModal() {
+  openAddProductModal(): void {
     this.editingProduct = null;
     this.showModal = true;
   }
 
-  openEditProductModal(product: Product) {
+  openEditProductModal(product: Product): void {
     this.editingProduct = product;
     this.showModal = true;
   }
 
-  onModalClose() {
+  onModalClose(): void {
     this.showModal = false;
     this.editingProduct = null;
   }
 
-  onProductSaved() {
+  onProductSaved(): void {
     this.loadProducts();
-    this.showModal = false;
-    this.editingProduct = null;
+    this.onModalClose();
   }
 
-  confirmDeleteProduct(product: Product) {
+  confirmDeleteProduct(product: Product): void {
     this.productToDelete = product;
     this.showDeleteConfirmation = true;
   }
 
-  handleConfirmDelete() {
+  handleConfirmDelete(): void {
     if (!this.productToDelete) return;
-    this.loading = true;
+
+    this.setLoading(true);
+
     this.productService.deleteProduct(this.productToDelete.id).subscribe({
       next: () => {
         this.loadProducts();
-        this.showDeleteConfirmation = false;
-        this.productToDelete = null;
+        this.resetDeleteConfirmation();
       },
       error: () => {
-        this.errorMessage = 'Error eliminando el producto';
-        this.loading = false;
-        this.showDeleteConfirmation = false;
-        this.productToDelete = null;
+        this.setError('Error eliminando el producto');
+        this.setLoading(false);
+        this.resetDeleteConfirmation();
       },
     });
   }
 
-  handleCancelDelete() {
+  handleCancelDelete(): void {
+    this.resetDeleteConfirmation();
+  }
+
+  private resetDeleteConfirmation(): void {
     this.showDeleteConfirmation = false;
     this.productToDelete = null;
+  }
+
+  private setLoading(state: boolean): void {
+    this.loading = state;
+  }
+
+  private setError(message: string): void {
+    this.errorMessage = message;
   }
 }

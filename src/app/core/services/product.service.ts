@@ -10,7 +10,6 @@ import { API_BASE_URL } from '../tokens/api-url.token';
   providedIn: 'root',
 })
 export class ProductService {
-  // En vez de constructor, usamos inject()
   private http = inject(HttpClient);
   private baseUrl = inject(API_BASE_URL);
 

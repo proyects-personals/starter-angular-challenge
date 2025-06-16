@@ -6,19 +6,22 @@
     </div>
 
     <div class="modal-body">
-      <form (ngSubmit)="saveProduct()" novalidate>
+      <form [formGroup]="form" (ngSubmit)="saveProduct()" novalidate>
         <div class="form-group">
           <label for="id">ID</label>
           <input
             type="text"
             id="id"
-            [(ngModel)]="product.id"
-            name="id"
-            (blur)="onBlur('id')"
-            [class.input-error]="idError && touchedFields.id"
+            formControlName="id"
+            [class.input-error]="fieldHasError('id', 'required') || fieldHasError('id', 'idTaken') || fieldHasError('id', 'pattern')"
             [disabled]="isEdit"
           />
-          <div *ngIf="idError && touchedFields.id" class="error-message">{{ idError }}</div>
+          <div *ngIf="fieldHasError('id', 'required')" class="error-message">El ID es requerido.</div>
+          <div *ngIf="fieldHasError('id', 'minlength')" class="error-message">El ID debe tener al menos 3 caracteres.</div>
+          <div *ngIf="fieldHasError('id', 'maxlength')" class="error-message">El ID no debe exceder 20 caracteres.</div>
+          <div *ngIf="fieldHasError('id', 'pattern')" class="error-message">El ID solo puede contener letras, números, guiones o guion bajo.</div>
+          <div *ngIf="fieldHasError('id', 'idTaken')" class="error-message">ID inválido!.</div>
+          <div *ngIf="fieldHasError('id', 'idCheckFailed')" class="error-message">Error verificando el ID.</div>
         </div>
 
         <div class="form-group">
@@ -26,12 +29,11 @@
           <input
             type="text"
             id="name"
-            [(ngModel)]="product.name"
-            name="name"
-            (blur)="onBlur('name')"
-            [class.input-error]="nameError && touchedFields.name"
+            formControlName="name"
+            [class.input-error]="fieldHasError('name', 'required') || fieldHasError('name', 'maxlength')"
           />
-          <div *ngIf="nameError && touchedFields.name" class="error-message">{{ nameError }}</div>
+          <div *ngIf="fieldHasError('name', 'required')" class="error-message">El nombre es requerido.</div>
+          <div *ngIf="fieldHasError('name', 'maxlength')" class="error-message">El nombre no debe exceder 100 caracteres.</div>
         </div>
 
         <div class="form-group">
@@ -39,25 +41,23 @@
           <input
             type="text"
             id="description"
-            [(ngModel)]="product.description"
-            name="description"
-            (blur)="onBlur('description')"
-            [class.input-error]="descriptionError && touchedFields.description"
+            formControlName="description"
+            [class.input-error]="fieldHasError('description', 'required') || fieldHasError('description', 'maxlength')"
           />
-          <div *ngIf="descriptionError && touchedFields.description" class="error-message">{{ descriptionError }}</div>
+          <div *ngIf="fieldHasError('description', 'required')" class="error-message">La descripción es requerida.</div>
+          <div *ngIf="fieldHasError('description', 'maxlength')" class="error-message">La descripción no debe exceder 255 caracteres.</div>
         </div>
 
         <div class="form-group">
-          <label for="logo">Logo</label>
+          <label for="logo">Logo (URL)</label>
           <input
             type="text"
             id="logo"
-            [(ngModel)]="product.logo"
-            name="logo"
-            (blur)="onBlur('logo')"
-            [class.input-error]="logoError && touchedFields.logo"
+            formControlName="logo"
+            [class.input-error]="fieldHasError('logo', 'required') || fieldHasError('logo', 'pattern')"
           />
-          <div *ngIf="logoError && touchedFields.logo" class="error-message">{{ logoError }}</div>
+          <div *ngIf="fieldHasError('logo', 'required')" class="error-message">El logo es requerido.</div>
+          <div *ngIf="fieldHasError('logo', 'pattern')" class="error-message">La URL del logo debe ser válida y terminar en jpg, png, svg o jpeg.</div>
         </div>
 
         <div class="form-group">
@@ -65,12 +65,10 @@
           <input
             type="date"
             id="date_release"
-            [(ngModel)]="product.date_release"
-            name="date_release"
-            (blur)="onBlur('date_release')"
-            [class.input-error]="dateReleaseError && touchedFields.date_release"
+            formControlName="date_release"
+            [class.input-error]="fieldHasError('date_release', 'required') || form.hasError('dateRevisionAfterRelease')"
           />
-          <div *ngIf="dateReleaseError && touchedFields.date_release" class="error-message">{{ dateReleaseError }}</div>
+          <div *ngIf="fieldHasError('date_release', 'required')" class="error-message">La fecha de liberación es requerida.</div>
         </div>
 
         <div class="form-group">
@@ -78,12 +76,13 @@
           <input
             type="date"
             id="date_revision"
-            [(ngModel)]="product.date_revision"
-            name="date_revision"
-            (blur)="onBlur('date_revision')"
-            [class.input-error]="dateRevisionError && touchedFields.date_revision"
+            formControlName="date_revision"
+            [class.input-error]="fieldHasError('date_revision', 'required') || form.hasError('dateRevisionAfterRelease')"
           />
-          <div *ngIf="dateRevisionError && touchedFields.date_revision" class="error-message">{{ dateRevisionError }}</div>
+          <div *ngIf="fieldHasError('date_revision', 'required')" class="error-message">La fecha de revisión es requerida.</div>
+          <div *ngIf="form.hasError('dateRevisionAfterRelease')" class="error-message">
+            La fecha de revisión debe ser igual o posterior a la fecha de liberación.
+          </div>
         </div>
 
         <div class="modal-actions">
@@ -99,8 +98,8 @@
           <button
             type="submit"
             class="btn btn-primary"
-            [disabled]="!validateForm() || isLoading"
-            [class.btn-disabled]="!validateForm() || isLoading"
+            [disabled]="form.invalid || isLoading"
+            [class.btn-disabled]="form.invalid || isLoading"
           >
             <ng-container *ngIf="isLoading; else normalText">
               Enviando...
