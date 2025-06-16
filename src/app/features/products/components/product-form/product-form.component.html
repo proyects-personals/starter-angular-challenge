@@ -1,0 +1,120 @@
+<div class="modal-overlay" [class.show]="isVisible">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>{{ isEdit ? 'Editar Producto' : 'Formulario de Registro' }}</h2>
+      <button class="close-button" (click)="closeModal()">✖</button>
+    </div>
+
+    <div class="modal-body">
+      <form (ngSubmit)="saveProduct()" novalidate>
+        <div class="form-group">
+          <label for="id">ID</label>
+          <input
+            type="text"
+            id="id"
+            [(ngModel)]="product.id"
+            name="id"
+            (blur)="onBlur('id')"
+            [class.input-error]="idError && touchedFields.id"
+            [disabled]="isEdit"
+          />
+          <div *ngIf="idError && touchedFields.id" class="error-message">{{ idError }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="name">Nombre</label>
+          <input
+            type="text"
+            id="name"
+            [(ngModel)]="product.name"
+            name="name"
+            (blur)="onBlur('name')"
+            [class.input-error]="nameError && touchedFields.name"
+          />
+          <div *ngIf="nameError && touchedFields.name" class="error-message">{{ nameError }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descripción</label>
+          <input
+            type="text"
+            id="description"
+            [(ngModel)]="product.description"
+            name="description"
+            (blur)="onBlur('description')"
+            [class.input-error]="descriptionError && touchedFields.description"
+          />
+          <div *ngIf="descriptionError && touchedFields.description" class="error-message">{{ descriptionError }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="logo">Logo</label>
+          <input
+            type="text"
+            id="logo"
+            [(ngModel)]="product.logo"
+            name="logo"
+            (blur)="onBlur('logo')"
+            [class.input-error]="logoError && touchedFields.logo"
+          />
+          <div *ngIf="logoError && touchedFields.logo" class="error-message">{{ logoError }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="date_release">Fecha Liberación</label>
+          <input
+            type="date"
+            id="date_release"
+            [(ngModel)]="product.date_release"
+            name="date_release"
+            (blur)="onBlur('date_release')"
+            [class.input-error]="dateReleaseError && touchedFields.date_release"
+          />
+          <div *ngIf="dateReleaseError && touchedFields.date_release" class="error-message">{{ dateReleaseError }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="date_revision">Fecha Revisión</label>
+          <input
+            type="date"
+            id="date_revision"
+            [(ngModel)]="product.date_revision"
+            name="date_revision"
+            (blur)="onBlur('date_revision')"
+            [class.input-error]="dateRevisionError && touchedFields.date_revision"
+          />
+          <div *ngIf="dateRevisionError && touchedFields.date_revision" class="error-message">{{ dateRevisionError }}</div>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="resetForm()"
+            [disabled]="isLoading"
+          >
+            Reiniciar
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="!validateForm() || isLoading"
+            [class.btn-disabled]="!validateForm() || isLoading"
+          >
+            <ng-container *ngIf="isLoading; else normalText">
+              Enviando...
+            </ng-container>
+            <ng-template #normalText>
+              {{ isEdit ? 'Enviar' : 'Enviar' }}
+            </ng-template>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-overlay">
+      <div class="spinner">Enviando...</div>
+    </div>
+  </div>
+</div>
