@@ -1,0 +1,37 @@
+<div class="container" style="padding: 50px;">
+  <div class="header-section">
+    <input
+      type="text"
+      placeholder="Search..."
+      class="search-input"
+      [(ngModel)]="searchTerm"
+      (input)="onSearchChange()"
+    />
+    <button (click)="openAddProductModal()" class="add-button">Agregar</button>
+  </div>
+
+  <app-product-list
+    [filteredProducts]="filteredProducts"
+    [loading]="loading"
+    [errorMessage]="errorMessage"
+    [itemsPerPage]="itemsPerPage"
+    [itemsPerPageOptions]="itemsPerPageOptions"
+    (editProduct)="openEditProductModal($event)"
+    (deleteProduct)="confirmDeleteProduct($event)"
+    (itemsPerPageChange)="onItemsPerPageChange($event)"
+  ></app-product-list>
+</div>
+
+<app-product-form
+  [isVisible]="showModal"
+  [productToEdit]="editingProduct"
+  (close)="onModalClose()"
+  (productSaved)="onProductSaved($event)"
+></app-product-form>
+
+<app-product-delete
+  [isVisible]="showDeleteConfirmation"
+  [message]="'¿Estás seguro de eliminar el producto &quot;' + (productToDelete?.name || '') + '&quot;?'"
+  (confirm)="handleConfirmDelete()"
+  (cancel)="handleCancelDelete()"
+></app-product-delete>
