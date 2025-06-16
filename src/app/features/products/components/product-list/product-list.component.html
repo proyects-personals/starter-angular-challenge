@@ -1,0 +1,83 @@
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Logo</th>
+        <th>Nombre del producto</th>
+        <th>Descripción</th>
+        <th>Fecha de liberación <span class="info-icon">i</span></th>
+        <th>Fecha de reestructuración <span class="info-icon">i</span></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngIf="loading">
+        <td colspan="6">
+          <app-skeleton-table></app-skeleton-table>
+        </td>
+      </tr>
+
+      <tr *ngIf="!loading && errorMessage">
+        <td colspan="6" class="error" style="text-align: center;">
+          {{ errorMessage }}
+        </td>
+      </tr>
+
+      <tr *ngIf="!loading && !errorMessage && filteredProducts.length === 0">
+        <td colspan="6" class="no-results" style="text-align: center;">
+          No hay productos para mostrar.
+        </td>
+      </tr>
+
+      <ng-container *ngIf="!loading && !errorMessage && filteredProducts.length > 0">
+        <tr *ngFor="let product of filteredProducts | slice:0:itemsPerPage; let i = index">
+          <td>
+            <div class="logo-circle">
+              <img [src]="product.logo" alt="{{ product.name }} logo" />
+            </div>
+          </td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+          <td>{{ product.date_release | dateSlash }}</td>
+          <td>{{ product.date_revision | dateSlash }}</td>
+          <td class="actions-cell">
+            <button
+              class="action-menu-button"
+              (click)="toggleActionMenu(i)"
+              aria-label="Menú de acciones"
+            >
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </button>
+
+            <div
+              class="action-menu"
+              *ngIf="openActionMenuIndex === i"
+              (mouseleave)="closeActionMenu()"
+            >
+              <button class="action-button" (click)="onEditProduct(product); closeActionMenu()">Editar</button>
+              <button class="action-button delete" (click)="onDeleteProduct(product); closeActionMenu()">Eliminar</button>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer-section">
+  <div class="results-count">
+    {{ filteredProducts.length }} Resultados
+  </div>
+
+  <div class="items-per-page-select">
+    <select
+      id="itemsPerPage"
+      [(ngModel)]="itemsPerPage"
+      (ngModelChange)="onItemsPerPageChange()"
+    >
+      <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+    </select>
+  </div>
+</div>
