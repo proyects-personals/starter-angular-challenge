@@ -32,6 +32,6 @@
 <app-product-delete
   [isVisible]="showDeleteConfirmation"
   [message]="'¿Estás seguro de eliminar el producto &quot;' + (productToDelete?.name || '') + '&quot;?'"
-  (confirm)="handleConfirmDelete()"
-  (cancel)="handleCancelDelete()"
+  (cancelDelete)="handleConfirmDelete()"
+  (confirmDelete)="handleCancelDelete()"
 ></app-product-delete>
