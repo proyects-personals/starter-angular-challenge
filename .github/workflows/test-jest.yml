@@ -23,4 +23,4 @@ jobs:
         run: npm ci
 
       - name: Run Jest tests
-        run: npm run test:jest
+        run: npm run test
